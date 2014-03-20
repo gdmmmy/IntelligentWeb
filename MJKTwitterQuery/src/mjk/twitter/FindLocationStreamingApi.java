@@ -31,8 +31,8 @@ public class FindLocationStreamingApi {
 	private List<VenuesModel>vms=new ArrayList<VenuesModel>();
 	private VenuesModel vm;
 	private List<TweeterModel> tweets;
-    private Status tweet ;
-	
+    private Status tweet;
+    private static String jsonstring;
 
 	public FindLocationStreamingApi(String args[]) throws Exception{
 		
@@ -70,8 +70,10 @@ public class FindLocationStreamingApi {
 	    				      		map.put("venues:", vms);
 		    				      	String testjson=ujson.JsonGenerate((HashMap<String, Object>) map);
 		    				      	System.out.println(testjson);
+		    				      	
 				  		        }
 		 		  		}else{};
+//		 		  		return testjson;
 		    	  
 		    	  }
 		    	  
