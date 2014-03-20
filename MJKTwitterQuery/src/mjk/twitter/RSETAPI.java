@@ -55,7 +55,7 @@ public class RSETAPI {
 //    		  				dc.InsertVenue(vm);
     		  				usertweet.settime(tweet.getCreatedAt());
     		  				usertweet.settweetcontext(tweet.getText());
-    		  				usertweet.setuserhandle(user.getName());
+    		  				usertweet.setuserhandle(user.getScreenName());
     		  				String tweettime=tweet.getCreatedAt().toGMTString();
     		  				String tweetid=Long.toString(tweet.getId());
     		  				vms.add(vm);
@@ -80,8 +80,8 @@ public class RSETAPI {
         	Map<String, Object> map = new HashMap<String, Object>();
         	map.put("tweetsinfo", tms);
         	JsonTweetsOperation ujson=new JsonTweetsOperation();
-//        JsonVenuesOperation vjson=new JsonVenuesOperation();
-        	map.put("venues:", vms);
+        	JsonVenuesOperation vjson=new JsonVenuesOperation();
+        	map.put("venues", vms);
         	String testjson=ujson.JsonGenerate((HashMap<String, Object>) map);
         	System.out.println(testjson);
         	return testjson;

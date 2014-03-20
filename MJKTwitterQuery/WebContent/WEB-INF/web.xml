@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
-  <display-name>MJK</display-name>
+  <display-name>MJKTwitterQuery</display-name>
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
     <welcome-file>index.htm</welcome-file>
@@ -11,22 +11,22 @@
   </welcome-file-list>
   <servlet>
     <description></description>
-    <display-name>Query</display-name>
-    <servlet-name>Query</servlet-name>
-    <servlet-class>mjk.webpage.servlet.Query</servlet-class>
+    <display-name>QueryLocationFromTweets</display-name>
+    <servlet-name>QueryLocationFromTweets</servlet-name>
+    <servlet-class>mjk.query.servlet.QueryLocationFromTweets</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>Query</servlet-name>
-    <url-pattern>/Query</url-pattern>
+    <servlet-name>QueryLocationFromTweets</servlet-name>
+    <url-pattern>/tweetvenue.json</url-pattern>
   </servlet-mapping>
   <servlet>
     <description></description>
-    <display-name>QueryLoaction</display-name>
-    <servlet-name>QueryLoaction</servlet-name>
-    <servlet-class>mjk.webpage.servlet.QueryLoaction</servlet-class>
+    <display-name>QueryTweetsFromLocation</display-name>
+    <servlet-name>QueryTweetsFromLocation</servlet-name>
+    <servlet-class>mjk.query.servlet.QueryTweetsFromLocation</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>QueryLoaction</servlet-name>
-    <url-pattern>/QueryLoaction</url-pattern>
+    <servlet-name>QueryTweetsFromLocation</servlet-name>
+    <url-pattern>/user.venue.json</url-pattern>
   </servlet-mapping>
 </web-app>
