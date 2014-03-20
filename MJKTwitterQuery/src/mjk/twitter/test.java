@@ -24,11 +24,11 @@ public class test {
 			RSETAPI rapi=new RSETAPI();
 			int x=3;
 			
-			rapi.FindLocation(x,"gdmmmy");
+//			rapi.FindLocation(x,"gdmmmy");
 			//through username to find location
-//			FindNearbyLocation at=new FindNearbyLocation();
-//			ArrayList<VenuesModel>Venue=at.authenticationRequest(location);
-//			rapi.findTweets(twitterConnection, x, Venue);
+			FindNearbyLocation at=new FindNearbyLocation();
+			ArrayList<VenuesModel>Venue=at.authenticationRequest(location);
+			rapi.findTweets(twitterConnection, x, Venue);
 //			int y=5;
 //			FindLocationStreamingApi sa=new FindLocationStreamingApi(usernames);
 //			FindTweetStreamingApi ft=new FindTweetStreamingApi(twitterConnection, Venue);
