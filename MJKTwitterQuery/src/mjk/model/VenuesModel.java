@@ -64,7 +64,7 @@ public class VenuesModel {
 	}
 	public String toString(){
 		String venue="The user name is "+username+
-				"The venuesname is "+venuesname+"";
+				"The venuesname is "+venuesname+photolists+"";
 //				"PhotoUrl "+photourl+latitude+longitude+category+creattime;
 		return venue;
 	}
