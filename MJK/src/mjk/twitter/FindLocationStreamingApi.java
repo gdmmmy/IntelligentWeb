@@ -26,56 +26,51 @@ import twitter4j.URLEntity;
 import twitter4j.User;
 public class FindLocationStreamingApi {
 	private String shorturl;
-	private DatabaseConnection dc;
-	private List<UserModel> users = new ArrayList<UserModel>();
-	private List<VenuesModel>vms=new ArrayList<VenuesModel>();
-	private VenuesModel vm;
-	private List<TweeterModel> tweets;
-    private Status tweet ;
+	private static VenuesModel vm;
+	private static List<VenuesModel>vms=new ArrayList<VenuesModel>();
+	private static User user;
+	private static UserModel usertweet;
+    
 	
 
 	public FindLocationStreamingApi(String args[]) throws Exception{
-		
+//				list=new ArrayList<String>();
+				vm=new VenuesModel();
+				vms=new ArrayList<VenuesModel>();
+				user=new User();
+				
 		        if (args.length < 1) {
 		            System.out.println("Usage: java twitter4j.examples.PrintFilterStream [follow(comma separated numerical user ids)] [track(comma separated filter terms)]");
 		            System.exit(-1);
 		        }
 		        StatusListener listener = new StatusListener() {
-					@Override
+		        	@Override
 		            public void onStatus(Status status) {
-		                System.out.println("@" + status.getUser().getScreenName() + " - " + status.getText()+"-"+status.getUser().getLocation());
-		                User user = status.getUser();
-		    	  		UserModel usertweet=new UserModel();
-		    	  	
-		    		  	if(status.getURLEntities()!=null)
-		    		  		{
-		    		  			URLEntity[] urls = status.getURLEntities();
-		    		  			for(URLEntity url : urls){
-		    		  				shorturl=url.getURL();
-		    		  				ConnectWithTwitter square=new ConnectWithTwitter();
-		    		  				try {
-										vm=square.ConnectTwitter(shorturl);
-									} catch (FoursquareApiException | SQLException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}
-		    		  				usertweet.setdescription(user.getDescription());
-		    		  				usertweet.setlocation(user.getLocation());
-		    		  				usertweet.setname(user.getName());
-		    		  				usertweet.setprofileurl(user.getProfileImageURL());
-		    		  				vms.add(vm);
-		    		  				users.add(usertweet);
-		    				    	  Map<String, Object> map = new HashMap<String, Object>();
-		    				      	JsonUserOperation ujson=new JsonUserOperation();
-	    				      		map.put("venues:", vms);
-		    				      	String testjson=ujson.JsonGenerate((HashMap<String, Object>) map);
-		    				      	System.out.println(testjson);
-				  		        }
-		 		  		}else{};
-		    	  
-		    	  }
-		    	  
-
+		        		User user = status.getUser();
+		        		UserModel usertweet=new UserModel();
+		        	
+		          	if(status.getURLEntities()!=null){
+		          		URLEntity[] urls = status.getURLEntities();
+		      			for(URLEntity url : urls){
+		      				shorturl=url.getURL();
+		      				ConnectWithTwitter square=new ConnectWithTwitter();
+		      				
+		    				try {
+		    					vm=square.ConnectTwitter(shorturl);
+		    				} catch (FoursquareApiException e) {
+		    					// TODO Auto-generated catch block
+		    					e.printStackTrace();
+		    					System.out.println("4square");
+		    				} catch (SQLException e) {
+		    					// TODO Auto-generated catch block
+		    					e.printStackTrace();
+		    					System.out.println("sqlerror");
+		    				}
+		    				vms.add(vm);
+		          	}
+		          	}              
+		    	 
+		        }
 		            @Override
 		            public void onDeletionNotice(StatusDeletionNotice statusDeletionNotice) {
 		                System.out.println("Got a status deletion notice id:" + statusDeletionNotice.getStatusId());

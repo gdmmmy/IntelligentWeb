@@ -1,10 +1,30 @@
-package mjk.twitter;
+/**  
+*FindTweetStreamingApi  
+*@author Yue Ma  
+*@version 1.0 2014/03/24  
+*/
 
+package mjk.twitter;
+//streaming api to find tweet by using box of location
+//print out line each json and insert it into database
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+
+import mjk.model.DatabaseConnection;
+import mjk.model.JsonUserOperation;
+import mjk.model.TweeterModel;
+import mjk.model.UserModel;
 import mjk.model.VenuesModel;
 import twitter4j.FilterQuery;
+import twitter4j.GeoLocation;
+import twitter4j.Query;
+import twitter4j.QueryResult;
 import twitter4j.StallWarning;
 import twitter4j.Status;
 import twitter4j.StatusDeletionNotice;
@@ -12,28 +32,31 @@ import twitter4j.StatusListener;
 import twitter4j.Twitter;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
+import twitter4j.User;
 
 public class FindTweetStreamingApi {
-	public FindTweetStreamingApi(Twitter twitter,List<VenuesModel>vms) throws Exception{
-//        if (args.length < 1) {
-//            System.out.println("Usage: java twitter4j.examples.PrintFilterStream [follow(comma separated numerical user ids)] [track(comma separated filter terms)]");
-//            System.exit(-1);
-//        }
+	
+	public static ArrayList<String> arraystr;
+	
+	public FindTweetStreamingApi(Twitter twitter,final List<VenuesModel>vms) throws Exception{
+		/** Find Tweet Streaming Api
+		* @param List<VenuesModel>l ,Twitter twitter
+		* @exception   
+		* @return jsonstring
+		*/
+//		final int TOTAL_TWEETS = 1000;
+//		final BlockingQueue<Status> statuses = new LinkedBlockingQueue<Status>(10000);
 		StatusListener list = new StatusListener()
 		{
-			
-		//	@Override public void onStatus(Status status) {
-			//	System.out.println("@" + status.getUser().getScreenName() + " - " + status.getText());
-			//	}
-			@Override
+		private DatabaseConnection dc = new DatabaseConnection();;
+
+		@Override
 			public void onException(Exception ex) {
-				// TODO Auto-generated method stub
 				ex.printStackTrace();
 			}
 
 			@Override
 			public void onDeletionNotice(StatusDeletionNotice statusDeletionNotice) {
-				// TODO Auto-generated method stub
 				System.out.println("Got a status deletion notice id:" + statusDeletionNotice.getStatusId());
 			}
 			@Override
@@ -43,44 +66,78 @@ public class FindTweetStreamingApi {
 			}
 			@Override
 			public void onScrubGeo(long userId, long upToStatusId) {
-				// TODO Auto-generated method stub
 				System.out.println("Got scrub_geo event userId:" + userId + " upToStatusId:" + upToStatusId);
 			}
 
 			@Override
 			public void onStallWarning(StallWarning warning) {
-				// TODO Auto-generated method stub
 				System.out.println("Got stall warning:" + warning);
 			}
 
 			@Override
 			public void onStatus(twitter4j.Status status) {
-				// TODO Auto-generated method stub
-			//	String user = "oOsYAza";
-			//	Query query = new Query("from:"+user);
-				System.out.println("@" + status.getUser().getScreenName() + " - " + status.getText());
-			//	System.out.println("@" +user());
+				arraystr = new ArrayList<String>();
+//				statuses.offer(status);
+				ArrayList<UserModel> usrs=new ArrayList<UserModel>();
+				try {
+						status.getUser();
+						TweeterModel usertweet=new TweeterModel();
+						UserModel usermodel=new UserModel();
+						usermodel.setdescription(status.getUser().getDescription());
+						usermodel.setlocation(status.getUser().getLocation());
+						usermodel.setname(status.getUser().getName());
+						usermodel.setprofileurl(status.getUser().getProfileImageURL());
+			    		usrs.add(usermodel);
+			    		usertweet.settweetcontext(status.getText());
+			    		usertweet.setuserhandle(status.getUser().getScreenName());
+			    		dc.InsertUsers(status.getUser().getName(), status.getUser().getScreenName(), status.getUser().getLocation(),status.getUser().getProfileImageURL(), status.getUser().getDescription());
+		  				dc.InsertTweets(status.getUser().getScreenName(), status.getText(), String.valueOf(status.getCreatedAt()), 
+		  				String.valueOf(status.getId()), null);
+					}
+				catch (Exception te) {
+				     te.printStackTrace();
+				             System.out.println("Failed to search tweets:" +te.getMessage());
+				             System.exit(-1);
+				        }
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("userinfo", usrs);
+				JsonUserOperation ujson=new JsonUserOperation();
+				map.put("venues:", vms);
+				String testjson=ujson.JsonGenerate((HashMap<String, Object>) map);
+				
+				System.out.println(testjson);
+				arraystr.add(testjson);
 			}
 		};
         TwitterStreamFactory factory=new TwitterStreamFactory(twitter.getConfiguration());
         TwitterStream twitterStream = factory.getInstance();
         twitterStream.addListener(list);
-        double[][] coordinate = new double[vms.size()][vms.size()];
-        for(int i=0;i<vms.size();i++){  
-        	coordinate[i][0]=vms.get(i).getLongtitude();
-        	for(int j=0;j<vms.size();j++){  
-            	coordinate[i][j]=vms.get(j).getLongtitude();  
+        for (int i=0;i<vms.size()-1;i++){
+        	double la1=(vms.get(i).getLatitude());
+        	double la2=(vms.get(i).getLatitude())+4;
+        	double lo1=(vms.get(i).getLongitude());
+        	double lo2=(vms.get(i).getLongitude())+4;
+        	
+        double[][] coordinate ={{lo1,la1},{lo2,la2}};
+        FilterQuery fq=new FilterQuery();
+    	fq.locations(coordinate);
+    	twitterStream.filter(fq);
+//    	 final List<Status> collected = new ArrayList<Status>(TOTAL_TWEETS);
+//         while (collected.size() < TOTAL_TWEETS) {
+//             final Status status = statuses.poll(10, TimeUnit.SECONDS); 
+//            if (status == null) {
+//                continue;
+//             }
+//             collected.add(status);
+//         }
+//         twitterStream.shutdown();
+//         System.out.println("already shut down");
         }
-            }
         
-//        double[][] coordinate ={{d,c},{f,e}};
-// sample() method internally creates a thread which manipulates TwitterStream and calls these adequate listener methods continuously.
-	
-    FilterQuery fq=new FilterQuery();
-	fq.locations(coordinate);
-	twitterStream.filter(fq);
+        }
+               
 	}
 
-	}
+	
 
 

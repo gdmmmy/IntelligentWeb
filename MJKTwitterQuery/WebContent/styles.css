@@ -1,0 +1,101 @@
+body {
+	background-repeat: no-repeat;
+/*	background-color: #000;*/
+	color: #CCC;
+	font-family:"Courier New", Courier, monospace;
+}
+
+
+/* LINKS */
+
+a img {
+	border: none; 
+}
+
+a.headerlink:link {
+	color: white; 
+	text-decoration: none;
+	font-size: 12px;
+	font-weight: bold;
+}
+a.headerlink:visited {
+	color: white; 
+	text-decoration: none; 
+	font-size: 12px;
+	font-weight: bold;
+}
+a.headerlink:hover {
+	color: #CCC; 
+	text-decoration: underline; 
+	font-size: 12px;
+	font-weight:bold;
+}
+a.headerlink:active {
+	color: #CCC;
+}
+
+a.link:link {
+	color: white; 
+	text-decoration: none;
+	font-size: 18px;
+	font-weight: bold;
+	outline:none;
+}
+
+a.link:visited {
+	color: white; 
+	text-decoration: none; 
+	font-size: 18px;
+	font-weight: bold;
+	outline:none;
+}
+
+a.link:hover {
+	color: #CCC; 
+	text-decoration: underline; 
+	font-size: 18px;
+	font-weight:bold;
+	outline:none;
+}
+
+a.link:active {
+	color: #CCC;
+	outline:none;
+} 
+
+ul.links li {
+	list-style-type: none;
+
+}
+
+#small {
+	font-size: 10px;
+}
+
+
+/* FORMS */
+legend {
+	color: #CCC;
+	font-size: 18px;
+	font-weight: bold;
+}
+#required {
+	color:red;
+}
+#uservenuesform, #venuesform, #frequencyform, #discussionsform {
+	/*float: left;*/
+}
+#formarea {
+	/*width:1200px;*/
+	/*margin:auto;*/
+}
+
+fieldset{
+	-moz-border-radius:5px;  
+  	border-radius: 5px;  
+  	-webkit-border-radius: 5px;
+}
+
+#leftinput, #rightinput {
+	clear: both;
+}

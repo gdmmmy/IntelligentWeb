@@ -16,21 +16,23 @@ public class test {
 			InitConnectionTwitter tt = new InitConnectionTwitter();
 			Twitter twitterConnection=null;
 			twitterConnection= tt.init();
-//			String username="gdmmmy,billy322";
+			String username="gdmmmy,billy322";
 			String[] usernames = new String[1];
-//			usernames[0]="gdmmmy";
+			usernames[0]="gdmmmy";
 
-			String location="2 Westfield Terrace";
-			RSETAPI rapi=new RSETAPI();
-			int x=3;
-			
-			rapi.FindLocation(x,"gdmmmy");
+//			String location="2 Westfield Terrace";
+//			RSETAPI rapi=new RSETAPI();
+//			int x=3;
+//			
+//			rapi.FindLocation(x,"gdmmmy");
 			//through username to find location
 //			FindNearbyLocation at=new FindNearbyLocation();
 //			ArrayList<VenuesModel>Venue=at.authenticationRequest(location);
 //			rapi.findTweets(twitterConnection, x, Venue);
 //			int y=5;
-//			FindLocationStreamingApi sa=new FindLocationStreamingApi(usernames);
+			FindLocationStreamingApi sa=new FindLocationStreamingApi(usernames);
+			
+//			for (int i=0;i<sa.list.size();i++){System.out.println(;}
 //			FindTweetStreamingApi ft=new FindTweetStreamingApi(twitterConnection, Venue);
 			
 //			sa.FindLocation(twitterConnection, usernames);

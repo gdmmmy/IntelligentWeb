@@ -1,5 +1,11 @@
-package mjk.model;
+/**  
+*JsonUserOperation
+*@author Yue Ma
+*@version 1.0 2014/03/24  
+*/ 
 
+package mjk.model;
+//transfer Usrs modle to json string
 import java.util.HashMap; 
 import java.util.List;
 import java.util.Map;
@@ -15,6 +21,11 @@ import com.google.gson.JsonObject;
 public class JsonUserOperation {
 
 	public String JsonGenerate(HashMap<String, Object> hashmap){
+		/** For Users Model transfer to Gson data 
+		* @param map of arraylist of users model   
+		* @exception 
+		* @return Json String
+		*/
 		Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create(); 
 		String json = gson.toJson(hashmap);
 		return json;

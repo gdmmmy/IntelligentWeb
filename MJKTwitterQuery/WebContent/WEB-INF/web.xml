@@ -2,12 +2,7 @@
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
   <display-name>MJKTwitterQuery</display-name>
   <welcome-file-list>
-    <welcome-file>index.html</welcome-file>
-    <welcome-file>index.htm</welcome-file>
-    <welcome-file>index.jsp</welcome-file>
-    <welcome-file>default.html</welcome-file>
-    <welcome-file>default.htm</welcome-file>
-    <welcome-file>default.jsp</welcome-file>
+    <welcome-file>queryInterface.html</welcome-file>
   </welcome-file-list>
   <servlet>
     <description></description>
@@ -27,6 +22,26 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>QueryTweetsFromLocation</servlet-name>
-    <url-pattern>/user.venue.json</url-pattern>
+    <url-pattern>/uservenue.json</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>QueryDiscussion</display-name>
+    <servlet-name>QueryDiscussion</servlet-name>
+    <servlet-class>mjk.query.servlet.QueryDiscussion</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>QueryDiscussion</servlet-name>
+    <url-pattern>/discussion.json</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>QueryFrequency</display-name>
+    <servlet-name>QueryFrequency</servlet-name>
+    <servlet-class>mjk.query.servlet.QueryFrequency</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>QueryFrequency</servlet-name>
+    <url-pattern>/frequency.json</url-pattern>
   </servlet-mapping>
 </web-app>

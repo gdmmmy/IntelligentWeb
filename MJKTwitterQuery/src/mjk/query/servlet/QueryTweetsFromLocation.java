@@ -1,5 +1,9 @@
+/** Sevelet for query tweets from nearby location
+* @param Null 
+* @exception   
+* @return return_value 
+*/
 package mjk.query.servlet;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
@@ -13,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import mjk.foursquare.FindNearbyLocation;
 import mjk.model.DatabaseConnection;
 import mjk.model.VenuesModel;
+import mjk.twitter.FindTweetStreamingApi;
 import mjk.twitter.InitConnectionTwitter;
 import mjk.twitter.RSETAPI;
 import twitter4j.Twitter;
@@ -43,43 +48,46 @@ public class QueryTweetsFromLocation extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-				//	String venue=request.getParameter("venue")
-				// String xday=request.getParameter("xday");
-				// response.setContentType("text/plain;charset=utf-8");
-				// request.setCharacterEncoding("utf-8");
-				PrintWriter out = response.getWriter();
-				try {
+					String venue=request.getParameter("venue");
+				    String xday=request.getParameter("xdays");
+				    PrintWriter out = response.getWriter();
+				    int x=Integer.parseInt(xday);
+				    FindNearbyLocation at=new FindNearbyLocation();
+					String location=venue;
+				    ArrayList<VenuesModel> Venue=new ArrayList<VenuesModel>();
+					try {
+						Venue = at.authenticationRequest(location);
 						DatabaseConnection dc=new DatabaseConnection();
 						dc.closecon();
-						InitConnectionTwitter tt = new InitConnectionTwitter();
-						Twitter twitterConnection=null;
+						} 
+					catch (FoursquareApiException | SQLException e1) {
+						e1.printStackTrace();
+					}
+					InitConnectionTwitter tt = new InitConnectionTwitter();
+					Twitter twitterConnection=null;
+					try {
 						twitterConnection= tt.init();
-//						String username="gdmmmy,billy322";
-						String[] usernames = new String[1];
-//						usernames[0]="gdmmmy";
-						FindNearbyLocation at=new FindNearbyLocation();
-						String location="2 Westfield Terrace";
-						RSETAPI rapi=new RSETAPI();
-						int x=3;
-						//should consider 
-						ArrayList<VenuesModel>Venue=at.authenticationRequest(location);
-						String json_data=rapi.findTweets(twitterConnection, x, Venue);
-						response.setContentType("user/venue/json");
-						response.setCharacterEncoding("UTF-8");
-						out.write(json_data);
-				} catch (IOException e) {
-					System.out.println("Something wrong");
-
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (FoursquareApiException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+				    if (x!=0){
+				    		RSETAPI rapi=new RSETAPI();
+				    		String json_data;
+							try {
+								json_data = rapi.findTweets(twitterConnection, x, Venue);
+								response.setContentType("uservenue/json");
+								response.setCharacterEncoding("UTF-8");
+				    		out.write(json_data);
+							} catch (SQLException e) {
+								e.printStackTrace();
+							}
+				    }else{
+				    		try {
+								FindTweetStreamingApi ft=new FindTweetStreamingApi(twitterConnection, Venue);
+							} catch (Exception e) {
+									e.printStackTrace();
+							}
+				    	}
 	}
 
 }

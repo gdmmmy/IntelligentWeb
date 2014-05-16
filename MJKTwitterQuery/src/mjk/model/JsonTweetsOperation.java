@@ -1,5 +1,11 @@
-package mjk.model;
+/**  
+*JsonTweetsOperation
+*@author Yue Ma
+*@version 1.0 2014/03/24  
+*/ 
 
+package mjk.model;
+//transfer Tweets Model to json string
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +15,13 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 public class JsonTweetsOperation {
+	
 	public String JsonGenerate(HashMap<String, Object> hashmap){
+		/** For Tweets Model transfer to Gson data 
+		* @param map of arraylist of tweets model   
+		* @exception 
+		* @return Json String
+		*/
 		Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create(); 
 		String json = gson.toJson(hashmap);
 		return json;

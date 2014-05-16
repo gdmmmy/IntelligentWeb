@@ -1,5 +1,11 @@
-package mjk.model;
+/**  
+*TweeterModel  
+*@author Yue Ma  
+*@version 1.0 2014/03/24
+*/ 
 
+package mjk.model;
+//Tweeter model
 import java.util.Date;
 
 public class TweeterModel {

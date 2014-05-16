@@ -61,7 +61,7 @@ public class RSETAPI {
     		  				vms.add(vm);
     		  				String sid=String.valueOf(tweet.getId());
     		  				String id=String.valueOf(user.getId());
-    		  				dc.InsertTweets(id,tweet.getText(), " ",user.getScreenName() , "1");
+//    		  				dc.InsertTweets(id,tweet.getText(), " ",user.getScreenName() , "1");
     		  				
     		  				//add usertweet as a object
 		  		        }

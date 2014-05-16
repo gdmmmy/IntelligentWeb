@@ -1,5 +1,11 @@
-package mjk.model;
+/**  
+*JsonVenuesOperation  
+*@author Yue Ma  
+*@version 1.0 2014/03/24
+*/ 
 
+package mjk.model;
+//transfer venues model to json string
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +15,11 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 public class JsonVenuesOperation {
+	/** For venues Model transfer to Gson data 
+	* @param map of arraylist of venues model   
+	* @exception 
+	* @return Json String
+	*/
 	public String JsonGenerate(HashMap<String, Object> hashmap){
 		Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create(); 
 		String json = gson.toJson(hashmap);
