@@ -6,7 +6,7 @@
 
 package mjk.model;
 //check in model
-
+//comment
 public class CheckinModel {
 	/** Checking Model in Foursquare
 	* @param venueid, userid, checkintime
