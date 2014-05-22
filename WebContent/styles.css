@@ -1,0 +1,93 @@
+body {
+	background-repeat: no-repeat;
+/*	background-color: #000;*/
+	color: #CCC;
+	font-family:"Courier New", Courier, monospace;
+}
+div.maincontainer{
+	width: 100%;
+	text-align: justify;
+	
+}
+
+div.headerarea{
+	width: 600px;
+	height: 200px;
+	margin: auto;
+}
+
+#loading{
+	position: relative;
+	width: 600px;
+	margin: auto;
+}
+#response{
+	position: relative;
+	width: 600px;
+	margin: auto;
+}
+/* LINKS */
+div.headerlinks{
+	float: left;
+	width: 300px;
+}
+
+a img {
+	border: none; 
+}
+
+a.headerlink:link {
+	color: #737373; 
+	text-decoration: none;
+	font-size: 18px;
+	font-weight: bold;
+}
+a.headerlink:visited {
+	color: #737373; 
+	text-decoration: none; 
+	font-size: 18px;
+	font-weight: bold;
+}
+a.headerlink:hover {
+	color: #CCC; 
+	text-decoration: underline; 
+	font-size: 18px;
+	font-weight:bold;
+}
+a.headerlink:active {
+	color: #CCC;
+}
+
+#small {
+	font-size: 10px;
+}
+
+
+/* FORMS */
+legend {
+	color: #CCC;
+	font-size: 18px;
+	font-weight: bold;
+}
+#required {
+	color:red;
+}
+#uservenuesform, #venuesform, #frequencyform, #discussionsform {
+	/*float: left;*/
+}
+
+#formarea {
+	width:300px;
+	float: left;
+}
+
+fieldset{
+	-moz-border-radius:5px;  
+  	border-radius: 5px;  
+  	-webkit-border-radius: 5px;
+}
+
+#leftinput, #rightinput {
+	clear: both;
+}
+

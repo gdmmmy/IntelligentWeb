@@ -1,0 +1,452 @@
+<html>
+<head>
+
+<meta http-equiv="content-type" content="application/json;charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="styles.css">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<!-- Show/Hide Forms Function -->
+<script type="text/javascript" >
+	function showHide(what,whatnot,whatnot2,whatnot3)  
+	{  
+	    var togform = typeof what == 'object'  
+	        ? what : document.getElementById(what); 
+	    var otherform = document.getElementById(whatnot);
+	    var anotherform = document.getElementById(whatnot2);
+	    var anotherotherform = document.getElementById(whatnot3);
+	  
+	    togform.style.display = 'block';
+	    otherform.style.display = 'none';
+	    anotherform.style.display = 'none';
+	    anotherotherform.style.display = 'none';
+	    
+	    return false;  
+	}
+</script>
+
+<!-- UserVenue Form Operations -->
+<script type="text/javascript">
+	function uservenuesFormValidation(){
+		var venue = document.forms.uservenues.venue.value;
+		var xdays = document.forms.uservenues.xdays.value;
+		//Check required fields
+		if (venue == "" || venue == null)
+		{
+			alert("Please enter at least one venue to track.");
+			document.uservenues.venue.focus();
+			return false;
+		}
+		if (xdays == "" || xdays == null)
+		{
+			alert("Please enter a number of days.");
+			document.uservenues.xdays.focus();
+			return false;
+		}
+		//number of days must 
+		//be numerical
+		if (/\D/.test(xdays))
+		{
+			alert("Number of days must be numerical");
+			document.uservenues.xdays.focus();
+			return false;
+		}
+		uservenuesFormQuery();
+		return false;
+	}
+	function uservenuesFormQuery(){
+		var ven = document.forms["uservenues"]["venue"].value;
+		var day = document.forms["uservenues"]["xdays"].value;
+
+		if (day == 0){//use streaming API
+			window.alert("Click OK when you are ready for streaming to begin");
+			//initialise the stream
+ 			$.ajax({
+ 				url : "uservenue.json",
+ 				type : "POST",
+ 				data : {	
+ 					venue: ven, 
+ 					xdays: day
+ 				},			
+ 				dataType : "json",
+ 				success : uservenuesDataHandler,
+ 				error: function(jqXHR, exception) { 
+ 					$("#loading").html("");
+ 					$("#response").html("");
+ 					$("#response").html("<p>"+jqXHR.status+": "+exception+"</p>");
+ 			    }
+ 			});
+ 			$("#loading").html("");
+ 			$("#response").html("");
+ 			$("#loading").html("<img src='ajax-loader.gif'/>");
+ 			return false;
+			window.alert("stream initialised");
+		
+			
+			//set a timeout for two minutes
+			setTimeout(function(){stopStream(stream)}, 300000); //five minutes
+			
+			//begin asking for updates every 3 seconds
+			var stream = setInterval(function(){getupdates()}, 60000); //every minute
+
+			function getupdates(){
+				alert("getting an update");
+				//make an ajax call for an update
+	 			$.ajax({
+	 				url : "uservenue.json",
+	 				type : "POST",
+	 				data : {	
+	 					venue: ven, 
+	 					xdays: day
+	 				},			
+	 				dataType : "json",
+	 				success : uservenuesDataHandler,
+	 				error: function(jqXHR, exception) { 
+	 					$("#loading").html("");
+	 					$("#response").html("");
+	 					$("#response").html("<p>"+jqXHR.status+": "+exception+"</p>");
+	 			    }
+	 			});
+	 			$("#loading").html("");
+	 			$("#response").html("");
+	 			$("#loading").html("<img src='ajax-loader.gif'/>");
+	 			return false;
+			}
+			function stopStream(stream){
+				var stream = stream;
+				clearInterval(stream);
+				//send a final ajax request with a stop command
+				window.alert("stopping the stream");
+			}
+		}
+		else {//don't use streaming API
+			window.alert("not streaming");
+			$.ajax({
+				url : "uservenue.json",
+				type : "POST",
+				data : {	
+					venue: ven, 
+					xdays: day
+				},			
+				dataType : "json",
+				success : uservenuesDataHandler,
+				error: function(jqXHR, exception) { 
+					$("#loading").html("");
+					$("#response").html("");
+					$("#response").html("<p>"+jqXHR.status+": "+exception+"</p>");
+			    }
+			});
+			$("#loading").html("");
+			$("#response").html("");
+			$("#loading").html("<img src='ajax-loader.gif'/>");
+			return false;
+		}
+	}
+
+	function uservenuesDataHandler(data) {
+		var ven = document.forms["uservenues"]["venue"].value;
+		var day = document.forms["uservenues"]["xdays"].value;
+		
+		$("#loading").html("");
+		$("#response").append("<p>Users who have checked in at "+ven+" in the last "+day+" days:<br/>");
+		var Ob = JSON.stringify(data);
+		var cleanOb = JSON.parse(Ob);
+		for (var i=0;i<cleanOb.userinfo.length;i++){
+			$("#response").append("<p><img src='"+cleanOb.userinfo[i].profileurl+"'> <b>"+cleanOb.userinfo[i].name+"</b> "+cleanOb.userinfo[i].location+" "+cleanOb.userinfo[i].description+" <a href=''>Last 100 Tweets</a></p>");
+		}
+		$("#uservenues")[0].reset();
+	  	return true;
+	}
+</script>
+
+<!-- Venue Form Operations -->
+<script type="text/javascript">
+	function venuesFormValidation(){
+		var user = document.forms.venues.user.value;
+		var xdays = document.forms.venues.xdays.value;
+		//Check required fields
+		if (user == "" || user == null)
+		{
+			alert("Please enter at least one username.");
+			document.venues.user.focus();
+			return false;
+		}
+		if (xdays == "" || xdays == null)
+		{
+			alert("Please enter a number of days. For current entries, please enter zero.");
+			return false;
+		}
+		//xdays must 
+		//be numerical
+		if (/\D/.test(xdays))
+		{
+			alert("Number of days must be numerical");
+			document.venues.xdays.focus();
+			return false;
+		}
+		venuesFormQuery();
+		return false;
+	}
+	function venuesFormQuery(){
+		var usr = document.forms["venues"]["user"].value;
+		var day = document.forms["venues"]["xdays"].value;
+		$.ajax({
+			url : "tweetvenue.json",
+			type : "POST",
+			data : {	
+				user: usr, 
+				xdays: day
+			},			
+			dataType : "json",
+			success : venuesDataHandler
+		});
+		$("#loading").html("");
+		$("#response").html("");
+		$("#loading").html("<img src='ajax-loader.gif'/>");
+
+		//$("#temp").text("foo");	
+		return false;
+	}
+	function venuesDataHandler(data) {
+		var Ob = JSON.stringify(data);
+		var cleanOb = JSON.parse(Ob);
+		$("#response").append("<p>Venue Data:<br/></p>");
+		for (var i=0;i<cleanOb.venues.length;i++){
+			$("#response").append("<p>"+cleanOb.venues[i].venuesname+" "+cleanOb.tweetsinfo[i].tweetcontext+"</p>");
+		}
+		$("#loading").html("");
+		$("#venues")[0].reset();
+	    return true;
+	}
+</script>
+
+<!-- Frequency Form Operations -->
+<script type="text/javascript">
+	function frequencyFormValidation(){
+		var user = document.forms.frequency.user.value;
+		var xkeys = document.forms.frequency.xkeys.value;
+		var xdays = document.forms.frequency.xdays.value;
+		//Check required fields
+		if (user == "" || user == null)
+		{
+			alert("Please enter at least one username.");
+			document.frequency.user.focus();
+			return false;
+		}
+		//xkeys and xdays must 
+		//be numerical
+		if (/\D/.test(xkeys) || /\D/.test(xdays))
+		{
+			alert("Number of keywords and number of days must be numerical");
+			document.frequency.xkeys.focus();
+			return false;
+		}
+		frequencyFormQuery();
+		return false;
+	}
+	function frequencyFormQuery(){
+		var usr = document.forms["frequency"]["user"].value;
+		var key = document.forms["frequency"]["xkeys"].value;
+		var day = document.forms["frequency"]["xdays"].value;
+		$.ajax({
+			url : "frequency.json",
+			type : "POST",
+			data : {	
+				user: usr, 
+				xkeys: key,
+				xdays: day
+			},			
+			dataType : "json",
+			success : frequencyDataHandler
+		});
+		$("#loading").html("");
+		$("#response").html("");
+		$("#loading").html("<img src='ajax-loader.gif'/>");	
+		return false;
+	}
+	function frequencyDataHandler(data) {
+		var usr = document.forms["frequency"]["user"].value;
+		var key = document.forms["frequency"]["xkeys"].value;
+		var day = document.forms["frequency"]["xdays"].value;
+		$("#loading").html("");
+		$("#response").append("<p>Most common "+key+" words for users "+usr+" for "+day+" days:</p>");
+		//create a string of HTML to display the table data
+		var TableString = " ";
+		TableString += "<div><table><tr><td></td>";
+		for (var i=0;i<data.Frequency.Person.length;i++){
+			TableString += "<td>";
+			TableString += data.Frequency.Person[i];
+			TableString += "</td>";
+		}
+		TableString += "<td>Total</td></tr>";
+		for (var i=0;i<data.Frequency.Word.length;i++){
+			TableString += "<tr><td>";
+			TableString += data.Frequency.Word[i];
+			TableString += "</td>";
+			for (var j=0;j<data.Frequency.npeople;j++){
+				TableString += "<td>";
+				TableString += data.Frequency.TermFrequency[j][i];
+				TableString += "</td>";
+			}
+			TableString += "<td>";
+			TableString += data.Frequency.TotalFrequency[i];
+			TableString += "</td>";
+			TableString += "</tr>";
+		}
+		TableString += "</table></div>";
+		$("#response").append(TableString);	
+	  	$("#frequency")[0].reset();
+	    return true;
+	}
+</script>
+
+<!--  Discussion Form Operations -->
+<script type="text/javascript">
+	function discussionsFormValidation(){
+		var keywords = document.forms.discussions.keywords.value;
+		var latitude = document.forms.discussions.latitude.value;
+		var longitude = document.forms.discussions.longitude.value;
+		//Check required fields
+		if (keywords == "" || keywords == null)
+		{
+			alert("Please enter at least one keyword or hashtag.");
+			document.discussions.keywords.focus();
+			return false;
+		}
+		//Latitude and Longitude must 
+		//be numerical
+		if (/\D/.test(latitude) || /\D/.test(longitude))
+		{
+			alert("Latitude and Longitude must be numerical");
+			document.discussions.latitude.focus();
+			return false;
+		}
+		discussionsFormQuery();
+		return false;
+	}
+	function discussionsFormQuery(){
+		var key = document.forms["discussions"]["keywords"].value;
+		var lat = document.forms["discussions"]["latitude"].value;
+		var lon = document.forms["discussions"]["longitude"].value;
+		$.ajax({
+			url : "discussion.json",
+			type : "POST",
+			data : {	
+				keyword: key, 
+				latitude: lat,
+				longitude: lon
+			},			
+			dataType : "json",
+			success : discussionsDataHandler
+		});
+		$("#loading").html("");
+		$("#response").html("");
+		$("#loading").html("<img src='ajax-loader.gif'/>");	
+		return false;
+	}
+	function discussionsDataHandler(data) {
+		$("#loading").html("");
+		window.alert("stringified datatweet: "+data.tweet[1].userhandle);
+		$('#response').append("<p>Tweet Data:<br/></p>");
+		for (var i=0;i<data.tweet.length;i++){
+			$("#response").append("<p><span style='font-weight:bold'>"+data.tweet[i].userhandle+" </span>"+data.tweet[i].tweetcontext+" "+data.tweet[i].time+" "+data.tweet[i].retweeter+"</p>");
+		}
+		return true;
+	}
+</script>
+
+</head>
+
+<body>
+<div class="maincontainer">
+<div class="headerarea">
+	<div class="headerlinks">
+		<a class="headerlink"
+		    href="UserVenuesForm"  
+		    onclick="return showHide('uservenuesform', 'venuesform', 'frequencyform', 'discussionsform')">  
+		        show/hide uservenues form  
+		</a><br/>
+		<a class="headerlink"
+		    href="VenuesForm"  
+		    onclick="return showHide('venuesform', 'uservenuesform', 'frequencyform', 'discussionsform')">  
+		        show/hide venues form  
+		</a><br/>
+		<a class="headerlink"
+		    href="FrequencyForm"  
+		    onclick="return showHide('frequencyform', 'venuesform', 'uservenuesform', 'discussionsform')">  
+		        show/hide frequency form  
+		</a><br/>
+		<a class="headerlink"
+		    href="UserVenuesForm"  
+		    onclick="return showHide('discussionsform', 'venuesform', 'uservenuesform', 'frequencyform')">  
+		        show/hide discussions form  
+		</a>
+	</div>
+<!-- Tracking Venue Visits by Venue -->
+	<div id="formarea">
+		<div id="uservenuesform" style="display:none;"><form onsubmit="return uservenuesFormValidation()" method="post" name="uservenues" id="uservenues">
+		<fieldset>
+		<legend>Venue Visits by Venue</legend>
+			<div id="leftinput"><span id=required>*</span>Venue:<br/>
+				<input type=text name=venue maxlength=250></div>
+ 			<div id="rightinput">#Days<br/>
+				<input type=text size=3 name=xdays maxlength=80>
+				<input type=submit value="Go!" ></div>
+		</fieldset>
+		</form></div>
+<!-- Tracking Venue Visits by User -->		
+		<div id="venuesform" style="display:none;"><form onsubmit="return venuesFormValidation()" method="post" name="venues" id="venues">
+		<fieldset>
+		<legend>Venue Visits by User</legend>
+			<span id=required>*</span>User:<br/>
+				<input type=text name=user maxlength=250>
+			<div>#Days<br/>
+				<input type=text size=3 name=xdays maxlength=80>
+				<input type=submit value="Go!" ></div>
+		</fieldset>
+		</form></div>
+<!-- Tracking Frequency -->
+		<div id="frequencyform" style="display:none;"><form onsubmit="return frequencyFormValidation()" method="post" name="frequency" id="frequency">
+		<fieldset>
+		<legend>Keyword Frequency</legend>
+			<div><span id=required>*</span>User:<br/>
+				<input type=text name=user maxlength=250></div>
+			<div>#Keywords<br/></div>
+				<input type=text size=3 name=xkeys maxlength=80><br/>
+			<div>#Days<br/>
+				<input type=text size=3 name=xdays maxlength=80>
+				<input type=submit value="Go!" ></div>
+		</fieldset>
+		</form></div>
+<!-- Tracking Discussions -->		
+		<div id="discussionsform" style="display:none;"><form onsubmit="return discussionsFormValidation()" method="post" name="discussions" id="discussions">
+		<fieldset>
+		<legend>Discussions</legend>
+			<div><span id=required>*</span>Keywords:<br/>
+				<input type=text name=keywords maxlength=250></div>
+			<div>Latitude<br/>
+				<input type=text name=latitude maxlength=80><br/></div>
+			<div>Longitude<br/>
+				<input type=text name=longitude maxlength=80>
+				<input type=submit value="Go!" ></div>
+		</fieldset>
+		</form></div>
+	</div><br/>
+</div>
+
+
+<!-- Main Canvas for Data Display -->
+	<div id="loading"></div>
+	<div id="response">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Nulla quis turpis quis sapien ultricies molestie non at risus.
+Sed a dolor bibendum, scelerisque augue vitae, dictum felis.
+In venenatis lectus nec tincidunt malesuada.
+Vestibulum tempor nunc vehicula, consectetur tellus vel, vehicula ante.
+Praesent blandit elit semper sapien pretium accumsan.
+Quisque iaculis ipsum in varius scelerisque.
+Fusce fringilla lectus quis consectetur rhoncus.
+Morbi semper metus non tellus sodales, vitae pulvinar metus accumsan.
+Nullam non erat euismod, imperdiet enim vitae, tristique nunc.
+Morbi dignissim sem vel elit rutrum feugiat.</div>
+
+</div>
+</body>
+</html>
